@@ -1,9 +1,61 @@
+<?php
+session_start();
+include '../db.php'; 
+
+// if (!isset($_SESSION['citizen_id'])) {
+//     header("Location: LoginAndSignup/login.php");
+//     exit();
+// }
+
+// $logged_in_citizen_id = $_SESSION['citizen_id'];
+$logged_in_citizen_id =101;
+
+$name_sql = "SELECT name FROM citizen WHERE citizen_id = ?";
+$name_stmt = $conn->prepare($name_sql);
+$name_stmt->bind_param("i", $logged_in_citizen_id);
+$name_stmt->execute();
+$name_result = $name_stmt->get_result();
+
+if ($name_row = $name_result->fetch_assoc()) {
+    $citizen_name = $name_row['name'];
+} else {
+    $citizen_name = "User";
+}
+$name_stmt->close();
+
+$sql = "
+    SELECT 
+        (SELECT COUNT(*) FROM complaint WHERE citizen_id = ? AND status IN ('pending', 'in_progress')) AS pending_count,
+        (SELECT COUNT(*) FROM complaint WHERE citizen_id = ? AND status = 'resolved') AS resolved_count,
+        (SELECT COUNT(*) FROM complaint WHERE citizen_id = ?) AS total_count,
+        (SELECT COUNT(*) FROM citizen_notification WHERE citizen_id = ? AND status = 'unread') AS unread_notifications
+";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("iiii", 
+    $logged_in_citizen_id, 
+    $logged_in_citizen_id, 
+    $logged_in_citizen_id, 
+    $logged_in_citizen_id
+);
+$stmt->execute();
+$result = $stmt->get_result();
+$data = $result->fetch_assoc();
+
+$pending_count = $data['pending_count'] ?? 0;
+$resolved_count = $data['resolved_count'] ?? 0;
+$total_count = $data['total_count'] ?? 0;
+$notification_count = $data['unread_notifications'] ?? 0;
+
+$stmt->close();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Clone</title>
+    <title>Citizen-Home</title>
     <style>
         :root {
             --primary-blue:#007bff;
@@ -165,7 +217,7 @@
             background-color: #e6fff0;
             border: 2px solid var(--success-green);
             color: var(--text-dark);
-        }        
+        }        
         .view-button .icon-main {
             color: var(--success-green);
             font-size: 2.2rem;
@@ -193,32 +245,35 @@
         <a href="#" class="logo">MCCCTS</a>
         <nav class="nav-links">
             <a href="#" class="nav-link"><span class="icon icon-register"></span> Register Complaint</a>
-            <a href="MyComplaints/MyComplaintsPend.html" class="nav-link"><span class="icon icon-my-complaints"></span> My Complaints</a>
+            <a href="MyComplaints/MyComplaintsPend.php" class="nav-link"><span class="icon icon-my-complaints"></span> My Complaints</a>
             <a href="#" class="nav-link">
-                <span class="icon icon-notifications"></span> Notifications <span class="notifications-badge">2</span>
+                <span class="icon icon-notifications"></span> Notifications 
+                <?php if ($notification_count > 0): ?>
+                    <span class="notifications-badge"><?php echo htmlspecialchars($notification_count); ?></span>
+                <?php endif; ?>
             </a>
             <a href="#" class="nav-link"><span class="icon icon-profile"></span> Profile</a>
         </nav>
     </header>
     <main class="dashboard-container">
         <section class="welcome-section">
-            <h1>Welcome Back, John!</h1>
+            <h1>Welcome Back, <?php echo htmlspecialchars($citizen_name); ?>!</h1>
             <p>Manage your complaints and track their progress</p>
         </section>
         <section class="stats-grid">
             <div class="stat-card stat-card-pending">
                 <span class="icon-placeholder icon-pending"></span>
-                <h2>2</h2>
+                <h2><?php echo htmlspecialchars($pending_count); ?></h2>
                 <p>Pending Complaints</p>
             </div>
             <div class="stat-card stat-card-resolved">
                 <span class="icon-placeholder icon-resolved"></span>
-                <h2>1</h2>
+                <h2><?php echo htmlspecialchars($resolved_count); ?></h2>
                 <p>Resolved Complaints</p>
             </div>
             <div class="stat-card stat-card-total">
                 <span class="icon-placeholder icon-total"></span>
-                <h2>3</h2>
+                <h2><?php echo htmlspecialchars($total_count); ?></h2>
                 <p>Total Complaints</p>
             </div>
         </section>
@@ -228,7 +283,7 @@
                 <h3>Register New Complaint</h3>
                 <p>Submit a new complaint for municipal issues</p>
             </a>
-            <a href="MyComplaints/MyComplaintsPend.html" class="action-button view-button">
+            <a href="MyComplaints/MyComplaintsPend.php" class="action-button view-button">
                 <span class="icon-main icon-view"></span>
                 <h3>View My Complaints</h3>
                 <p>Track the status of your submitted complaints</p>

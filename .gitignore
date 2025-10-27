@@ -1,0 +1,11 @@
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+/vendor/
+
+.DS_Store
+Thumbs.db
+
+.env
