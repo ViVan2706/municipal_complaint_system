@@ -2,13 +2,12 @@
 session_start();
 include '../db.php'; 
 
-// if (!isset($_SESSION['citizen_id'])) {
-//     header("Location: LoginAndSignup/login.php");
-//     exit();
-// }
+if (!isset($_SESSION['citizen_id'])) {
+    header("Location: LoginAndSignup/login.html");
+    exit();
+}
 
-// $logged_in_citizen_id = $_SESSION['citizen_id'];
-$logged_in_citizen_id =101;
+$logged_in_citizen_id = $_SESSION['citizen_id'];
 
 $name_sql = "SELECT name FROM citizen WHERE citizen_id = ?";
 $name_stmt = $conn->prepare($name_sql);

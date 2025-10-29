@@ -2,15 +2,12 @@
 session_start();
 include '../../db.php'; 
 
-// --- Authentication and Setup ---
-// if (!isset($_SESSION['citizen_id'])) {
-//     header("Location: ../LoginAndSignup/login.php");
-//     exit();
-// }
+if (!isset($_SESSION['citizen_id'])) {
+    header("Location: LoginAndSignup/login.html");
+    exit();
+}
 
-// $logged_in_citizen_id = $_SESSION['citizen_id'];
-$logged_in_citizen_id = 101; 
-
+$logged_in_citizen_id = $_SESSION['citizen_id'];
 $citizen_name = "User";
 
 $name_sql = "SELECT name FROM citizen WHERE citizen_id = ?";
@@ -340,14 +337,14 @@ $tab_counts_stmt->close();
                     <div class="detail-line">
                         <span class="detail-icon icon-date"></span> Filed: <?php echo htmlspecialchars($row['filed_date']); ?> 
                         <?php if ($row['status'] == 'resolved'): ?>
-                           | **Resolved: <?php echo htmlspecialchars($row['resolved_date']); ?>**
+                           | Resolved: <?php echo htmlspecialchars($row['resolved_date']); ?>
                         <?php elseif ($row['status'] == 'rejected'): ?>
-                           | **Rejected by Admin**
+                           | Rejected by Admin
                         <?php endif; ?>
                     </div>
                     <?php if ($row['worker_name']): ?>
                     <div class="detail-line">
-                        <span class="detail-icon icon-user"></span> Assigned Worker: **<?php echo htmlspecialchars($row['worker_name']); ?>**
+                        <span class="detail-icon icon-user"></span> Assigned Worker: <?php echo htmlspecialchars($row['worker_name']); ?>
                     </div>
                     <?php endif; ?>
                     <p style="margin-top: 10px; color: var(--text-dark);"><?php echo htmlspecialchars(substr($row['description'], 0, 100)) . '...'; ?></p>

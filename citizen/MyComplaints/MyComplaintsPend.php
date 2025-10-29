@@ -2,13 +2,12 @@
 session_start();
 include '../../db.php'; 
 
-// if (!isset($_SESSION['citizen_id'])) {
-//     header("Location: ../LoginAndSignup/login.php");
-//     exit();
-// }
+if (!isset($_SESSION['citizen_id'])) {
+    header("Location: LoginAndSignup/login.html");
+    exit();
+}
 
-// $logged_in_citizen_id = $_SESSION['citizen_id'];
-$logged_in_citizen_id = 101;
+$logged_in_citizen_id = $_SESSION['citizen_id'];
 
 $name_sql = "SELECT name FROM citizen WHERE citizen_id = ?";
 $name_stmt = $conn->prepare($name_sql);
@@ -337,16 +336,16 @@ $tab_counts_stmt->close();
                     <div class="detail-line">
                         <span class="detail-icon icon-date"></span> Filed: <?php echo htmlspecialchars($row['filed_date']); ?> 
                         <?php if ($row['status'] == 'in_progress'): ?>
-                           | **Assigned**
+                           | Assigned
                         <?php endif; ?>
                     </div>
                     <?php if ($row['worker_name']): ?>
                     <div class="detail-line">
-                        <span class="detail-icon icon-user"></span> Assigned Worker: **<?php echo htmlspecialchars($row['worker_name']); ?>**
+                        <span class="detail-icon icon-user"></span> Assigned Worker: <?php echo htmlspecialchars($row['worker_name']); ?>
                     </div>
                     <?php else: ?>
                     <div class="detail-line">
-                        <span class="detail-icon icon-user"></span> **Awaiting Worker Assignment**
+                        <span class="detail-icon icon-user"></span> Awaiting Worker Assignment
                     </div>
                     <?php endif; ?>
                     <p style="margin-top: 10px; color: var(--text-dark);"><?php echo htmlspecialchars(substr($row['description'], 0, 100)) . '...'; ?></p>
