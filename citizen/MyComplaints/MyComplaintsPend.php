@@ -289,15 +289,15 @@ $tab_counts_stmt->close();
     <header class="header">
         <a href="../home.php" class="logo">MCCCTS</a>
         <nav class="nav-links">
-            <a href="#" class="nav-link"><span class="icon icon-register"></span> Register Complaint</a>
-            <a href="#" class="nav-link active"><span class="icon icon-my-complaints"></span> My Complaints</a>
-            <a href="#" class="nav-link">
+            <a href="../RegisterComplaint/file_complaint.php" class="nav-link"><span class="icon icon-register"></span> Register Complaint</a>
+            <a href="../MyComplaints/MyComplaintsPend.php" class="nav-link active"><span class="icon icon-my-complaints"></span> My Complaints</a>
+            <a href="../NotificationsCitizen/Notifications.php" class="nav-link">
                 <span class="icon icon-notifications"></span> Notifications 
                 <?php if ($notification_count > 0): ?>
                     <span class="notifications-badge"><?php echo htmlspecialchars($notification_count); ?></span>
                 <?php endif; ?>
             </a>
-            <a href="#" class="nav-link"><span class="icon icon-profile"></span> Profile</a>
+            <a href="../profile/profile.php" class="nav-link"><span class="icon icon-profile"></span> Profile</a>
         </nav>
     </header>
     <main class="dashboard-container">
