@@ -1,0 +1,399 @@
+/* Custom Fonts (Assuming a standard sans-serif similar to the image) */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: #fff; /* Changed to white */
+    color: #333;
+    line-height: 1.5;
+}
+
+.container {
+    /* REMOVED: max-width: 1200px; */ 
+    /* REMOVED: margin: 20px auto; */
+    
+    /* NEW: Use full width, and remove top/bottom margin */
+    width: 100%; 
+    margin: 0;
+    
+    background-color: #fff;
+    border-radius: 0; /* Removing rounded corners for a full-width look */
+    box-shadow: none; /* Removing box-shadow for a cleaner, full-width look */
+    overflow: hidden;
+}
+
+/* Header/Navigation Bar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 30px;
+    background-color: #fff;
+    border-bottom: 1px solid #ebedf2;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 600;
+    color: #407fff; /* Primary Blue for MCCCTS */
+    display: flex;
+    align-items: center;
+}
+
+.logo i {
+    margin-right: 10px;
+    font-size: 24px;
+}
+
+.navbar nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    font-size: 15px;
+}
+
+.navbar nav ul li {
+    margin-left: 25px;
+}
+
+.navbar nav ul li .nav-item {
+    text-decoration: none;
+    color: #777;
+    font-weight: 500;
+    padding: 5px 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.navbar nav ul li .nav-item i {
+    margin-right: 5px;
+    font-size: 18px;
+    color: #999;
+}
+
+/* Active Navigation Item Styling */
+.navbar nav ul li .nav-item.active {
+    color: #407fff;
+    font-weight: 600;
+    background-color: #e6f0ff; /* Light blue background for active */
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.navbar nav ul li .nav-item.active i {
+    color: #407fff;
+}
+
+/* Notifications Badge */
+.notification-badge {
+    background-color: #f04e3b; /* Red badge */
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 50%;
+    padding: 2px 6px;
+    position: absolute;
+    top: -5px;
+    right: -10px;
+}
+
+/* Main Content Styling */
+.content {
+    padding: 40px 30px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.page-description {
+    color: #888;
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+/* Dashboard Cards (Screenshot 1) */
+.dashboard-cards {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 35px;
+}
+
+.card {
+    flex: 1;
+    background-color: #fff;
+    border: 1px solid #e0e4eb;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.card.in-progress {
+    background-color: #f4f8ff; /* Light blue for In Progress */
+    border-color: #dbe4f1;
+}
+
+.card.completed {
+    background-color: #e8f9ed; /* Light green for Completed */
+    border-color: #d1e9d8;
+}
+
+.card .icon {
+    font-size: 30px;
+    margin-bottom: 5px;
+    color: #407fff; /* Blue icon default */
+}
+
+.card.in-progress .icon {
+    color: #407fff;
+}
+
+.card.completed .icon {
+    color: #28a745; /* Green icon for completed */
+}
+
+.card .value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.card .label {
+    font-size: 14px;
+    color: #777;
+}
+
+/* Action Buttons below cards (Screenshot 1) */
+.action-buttons {
+    display: flex;
+    gap: 25px;
+}
+
+.action-button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 20px 25px;
+    background-color: #fff;
+    border: 1px solid #e0e4eb;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.action-button:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-button-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.action-button i {
+    font-size: 30px;
+    margin-right: 15px;
+    color: #407fff;
+}
+
+.action-button.completed-work {
+    background-color: #e8f9ed; /* Light green background */
+    border-color: #d1e9d8;
+}
+
+.action-button.completed-work i {
+    color: #28a745; /* Darker green icon for completed work button */
+}
+
+.action-button-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.action-button-subtitle {
+    font-size: 13px;
+    color: #888;
+}
+
+/* Complaint/Notification List Items (Screenshots 2, 3, 4) */
+.list-item {
+    background-color: #fff;
+    border: 1px solid #e0e4eb;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.list-item:last-child {
+    margin-bottom: 0;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.item-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+.item-title i {
+    margin-right: 8px;
+    color: #28a745; /* Green checkmark */
+    font-size: 20px;
+}
+
+.item-title span {
+    color: #444; /* Complaint text color */
+}
+
+/* Status Badges */
+.item-status {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+}
+
+.status-high-priority {
+    background-color: #f04e3b; /* Red */
+}
+
+.status-medium-priority {
+    background-color: #ffc107; /* Yellow/Orange */
+    color: #333;
+}
+
+.status-resolved {
+    background-color: #28aa28; /* Deep Green for Resolved */
+}
+
+.status-new {
+    background-color: #407fff; /* Primary Blue for New */
+    font-size: 12px;
+    padding: 3px 8px;
+    text-transform: capitalize;
+}
+
+/* Item Details */
+.item-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 30px;
+    color: #666;
+    font-size: 14px;
+    margin-top: 10px;
+    padding-left: 5px;
+}
+
+.item-details-row {
+    display: flex;
+    align-items: center;
+}
+
+.item-details-row i {
+    margin-right: 8px;
+    color: #999;
+}
+
+/* Assigned Complaints Specifics */
+.assigned-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #eee;
+}
+
+.assigned-status-text {
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+    /* This will be the dropdown style */
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.view-details-button {
+    background-color: #407fff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.view-details-button:hover {
+    background-color: #3366cc;
+}
+
+/* Notifications Specific Styling */
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.notification-icon-text {
+    display: flex;
+    align-items: flex-start;
+    flex-grow: 1;
+}
+
+.notification-icon-text i {
+    font-size: 20px;
+    margin-right: 15px;
+    color: #407fff; /* Blue for new assignment/in progress */
+    margin-top: 0;
+}
+
+.notification-icon-text .fas.fa-clock {
+    color: #f7b447; /* Yellow/Orange for time-related status */
+}
+
+.notification-icon-text .fas.fa-check-circle {
+    color: #28a745; /* Green for admin approval */
+}
+
+.notification-content {
+    flex-grow: 1;
+    max-width: 90%; /* To prevent text from running into the badge */
+}
+
+.notification-text {
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+}
+
+.notification-date {
+    font-size: 13px;
+    color: #888;
+    margin-top: 3px;
+}
