@@ -12,19 +12,22 @@ $worker_id = $_SESSION['worker_id'];
 $message = "";
 $error = "";
 
-// 2. Update Profile Logic (Only Name and Phone)
+// 2. Update Profile Logic (Name, Phone, and Availability Status)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_profile'])) {
     $name = trim($_POST['name']);
     $phone = trim($_POST['phone']);
+    $status = $_POST['availability_status']; // New status capture
     
     if (!empty($name) && !empty($phone)) {
-        $update_sql = "UPDATE worker SET name = ?, phone_no = ? WHERE worker_id = ?";
+        // Updated SQL to include availability_status
+        $update_sql = "UPDATE worker SET name = ?, phone_no = ?, availability_status = ? WHERE worker_id = ?";
         $update_stmt = $conn->prepare($update_sql);
-        $update_stmt->bind_param("ssi", $name, $phone, $worker_id);
+        // Changed bind parameters to "sssi" (string, string, string, integer)
+        $update_stmt->bind_param("sssi", $name, $phone, $status, $worker_id);
         
         if ($update_stmt->execute()) {
-            $message = "Profile updated successfully!";
-            $_SESSION['name'] = $name; // Update session name immediately
+            $message = "Profile and Status updated successfully!";
+            $_SESSION['name'] = $name; 
         } else {
             $error = "Error updating profile. Please try again.";
         }
@@ -60,14 +63,24 @@ $notif_stmt->close();
     <title>Profile | MCCCTS Worker</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Basic styling for the select dropdown to match inputs */
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
         <a href="worker_dashboard.php" class="logo">
-            <i class="fas fa-hard-hat"></i> MCCCTS - Worker
+            MCCCTS - Worker
         </a>
         <nav class="nav-links">
-            <a href="worker_dashboard.php" class="nav-link">Home</a>
             <a href="worker_dashboard.php?section=assigned" class="nav-link">Assigned</a>
             <a href="worker_dashboard.php?section=completed" class="nav-link">Completed</a>
             <a href="worker_dashboard.php?section=notifications" class="nav-link">
@@ -110,8 +123,14 @@ $notif_stmt->close();
                     <input type="text" name="phone" value="<?php echo htmlspecialchars($user['phone_no']); ?>" required>
                 </div>
                 
-                <!-- <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;"> -->
-                
+                <div class="form-group">
+                    <label>Availability Status</label>
+                    <select name="availability_status">
+                        <option value="available" <?php echo ($user['availability_status'] == 'available') ? 'selected' : ''; ?>>Available</option>
+                        <option value="not available" <?php echo ($user['availability_status'] == 'not available') ? 'selected' : ''; ?>>Not Available</option>
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <label>Address (Cannot be changed)</label>
                     <input type="text" value="<?php echo htmlspecialchars($user['department']); ?>" readonly style="background-color: #e9ecef; color: #6c757d; cursor: not-allowed;">
@@ -120,11 +139,6 @@ $notif_stmt->close();
                 <div class="form-group">
                     <label>Email (Cannot be changed)</label>
                     <input type="email" value="<?php echo htmlspecialchars($user['email']); ?>" readonly style="background-color: #e9ecef; color: #6c757d; cursor: not-allowed;">
-                </div>
-
-                <div class="form-group">
-                    <label>Current Status</label>
-                    <input type="text" value="<?php echo htmlspecialchars(ucfirst($user['availability_status'])); ?>" readonly style="background-color: #e9ecef; color: #6c757d; cursor: not-allowed;">
                 </div>
 
                 <button type="submit" name="update_profile" class="btn-save">Save Changes</button>
