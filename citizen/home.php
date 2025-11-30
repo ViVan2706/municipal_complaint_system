@@ -241,7 +241,7 @@ $stmt->close();
 </head>
 <body>
     <header class="header">
-        <a href="#" class="logo">MCCCTS</a>
+        <a href="#" class="logo">MCCCTS Citizen</a>
         <nav class="nav-links">
             <a href="RegisterComplaint/file_complaint.php" class="nav-link"><span class="icon icon-register"></span> Register Complaint</a>
             <a href="MyComplaints/MyComplaintsPend.php" class="nav-link"><span class="icon icon-my-complaints"></span> My Complaints</a>

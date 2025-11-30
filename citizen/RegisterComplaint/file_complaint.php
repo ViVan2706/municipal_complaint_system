@@ -111,7 +111,7 @@ body {
 <body>
 
 <header class="header">
-    <a href="../home.php" class="logo">MCCCTS</a>
+    <a href="../home.php" class="logo">MCCCTS Citizen</a>
     <nav class="nav-links">
         <a href="../RegisterComplaint/file_complaint.php" class="nav-link active">
             <span class="icon icon-register"></span> Register Complaint

@@ -1,69 +1,76 @@
-<h1 class="page-title">Notifications</h1>
+<style>
+    /* ... Baki purani CSS same rahegi (card layout etc) ... */
+
+    /* Sirf Emoji Button ke liye style */
+    .btn-emoji {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.8rem; /* Emoji ka size */
+        padding: 0;
+        margin-left: 10px;
+        transition: transform 0.2s ease;
+    }
+
+    /* Hover karne par thoda bada hoga */
+    .btn-emoji:hover {
+        transform: scale(1.2);
+    }
+
+    .notification-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+</style>
 
 <?php
-
-$sql = "SELECT * FROM worker_notification
-        WHERE worker_id = ?
-        ORDER BY date_time DESC";
-
-$stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "i", $worker_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+// ... Database connection code ...
 
 if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         
-        $msg = strtolower($row['message']);
-        if (strpos($msg, 'assigned') !== false) {
-            $icon = "fas fa-user";
-            $icon_style = "icon-orange"; 
-        } elseif (strpos($msg, 'resolved') !== false || strpos($msg, 'completed') !== false) {
-            $icon = "fas fa-check";
-            $icon_style = "icon-green"; 
-        } else {
-            $icon = "fas fa-info";
-            $icon_style = "icon-blue"; 
-        }
-        
-        // 2. Determine Status (Read/Unread)
         $is_unread = ($row['status'] == 'unread');
-        // 'unread' class triggers the blue left border and light blue background
-        $card_class = $is_unread ? 'unread' : ''; 
+        
+        // Unread = Blue Highlight, Read = Normal
+        $card_style = $is_unread ? 'background:#f0f7ff; border-left: 5px solid #007bff;' : 'background:#fff; border-left: 5px solid transparent; opacity: 0.7;'; 
 ?>
 
-<div class="notification-card <?php echo $card_class; ?>">
+<div class="notification-card" style="<?php echo $card_style; ?>">
     
-    <div class="notif-left">
-        <div class="notif-icon-box <?php echo $icon_style; ?>">
-            <i class="<?php echo $icon; ?>"></i>
+    <div class="notification-content">
+        <div class="icon-wrapper">
+             <?php 
+                if (strpos(strtolower($row['message']), 'assigned') !== false) {
+                    echo '<i class="fas fa-briefcase"></i>';
+                } else {
+                    echo '<i class="fas fa-bell"></i>';
+                }
+             ?>
         </div>
-        
         <div>
-            <div class="notif-message">
-                <?php echo htmlspecialchars($row['message']); ?>
-            </div>
-            <div class="notif-date">
-                <?php echo date("Y-m-d H:i:s", strtotime($row['date_time'])); ?>
+            <div class="notification-text"><?php echo htmlspecialchars($row['message']); ?></div>
+            <div class="notification-date">
+                <?php echo date("d M Y, h:i A", strtotime($row['date_time'])); ?>
             </div>
         </div>
     </div>
 
-    <div class="notif-actions">
+    <div class="notification-actions">
         <?php if ($is_unread): ?>
-            <span class="badge-new">New</span>
             
+            <span class="badge-new">New</span>
+
             <form action="mark_read.php" method="POST" style="margin:0;">
                 <input type="hidden" name="notif_id" value="<?php echo $row['worker_notification_id']; ?>">
-                <button type="submit" class="btn-tick" title="Mark as Read">
-                    <i class="fas fa-check"></i>
+                
+                <button type="submit" class="btn-emoji" title="Mark as Read">
+                    ✅
                 </button>
             </form>
+
         <?php else: ?>
-            <span style="color: #ccc; font-size: 1.2rem;">
-                <i class="fas fa-check-double"></i>
-             </span>
-        <?php endif; ?>
+            <?php endif; ?>
     </div>
 
 </div>
@@ -71,7 +78,6 @@ if (mysqli_num_rows($result) > 0) {
 <?php
     } 
 } else {
-    echo "<p style='color:#6c757d; text-align:center; margin-top:20px;'>You have no notifications.</p>";
+    echo "<p style='text-align:center; margin-top:20px; color:#666;'>No notifications found.</p>";
 }
-mysqli_stmt_close($stmt);
 ?>
