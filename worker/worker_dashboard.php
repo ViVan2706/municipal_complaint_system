@@ -2,7 +2,6 @@
 session_start();
 include '../db.php'; 
 
-// 1. Authentication Check
 if (!isset($_SESSION['worker_id']) || $_SESSION['role'] !== 'worker') {
     header("Location: ../LoginAndSignup/login.html");
     exit();
@@ -11,7 +10,6 @@ if (!isset($_SESSION['worker_id']) || $_SESSION['role'] !== 'worker') {
 $worker_id = $_SESSION['worker_id'];
 $worker_name = "Worker";
 
-// 2. Fetch Worker Name
 $sql_worker = "SELECT name FROM worker WHERE worker_id = ?";
 $stmt_worker = $conn->prepare($sql_worker);
 $stmt_worker->bind_param("i", $worker_id);
@@ -22,7 +20,6 @@ if ($row_worker = $result_worker->fetch_assoc()) {
 }
 $stmt_worker->close();
 
-// 3. Fetch Notification Count
 $notification_count = 0;
 $sql_count = "SELECT COUNT(*) AS unread_count FROM worker_notification WHERE worker_id = ? AND status = 'unread'";
 $stmt_count = $conn->prepare($sql_count);
@@ -34,9 +31,6 @@ if ($row_count = $result_count->fetch_assoc()) {
 }
 $stmt_count->close();
 
-// 4. Fetch Statistics for Worker
-// Assigned = Pending + In Progress
-// Completed = Resolved + Closed
 $stats_sql = "
     SELECT 
         (SELECT COUNT(*) FROM complaint WHERE worker_id = ? AND status IN ('pending', 'in_progress')) AS assigned_count,
@@ -62,7 +56,6 @@ $section = $_GET['section'] ?? 'dashboard';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Worker Dashboard | MCCCTS</title>
     <style>
-        /* --- CITIZEN DASHBOARD CSS (Copied Exactly) --- */
         :root {
             --primary-blue:#007bff;
             --success-green:#28a745;
@@ -240,14 +233,13 @@ $section = $_GET['section'] ?? 'dashboard';
             font-size: 0.9rem;
             color: #6c757d;
         }
-        /* Unicode Icons for simplicity matching citizen css logic */
-        .icon-register::before { content: '🏠'; font-weight: bold; } /* Home Icon */
-        .icon-my-complaints::before { content: '🛠️'; } /* Tools Icon for Assigned */
-        .icon-completed::before { content: '✅'; } /* Check Icon */
+        .icon-register::before { content: '🏠'; font-weight: bold; } 
+        .icon-my-complaints::before { content: '🛠️'; } 
+        .icon-completed::before { content: '✅'; } 
         .icon-notifications::before { content: '🔔'; }
         .icon-profile::before { content: '👤'; }
-        .icon-add::before { content: '📋'; } /* Clipboard */
-        .icon-view::before { content: '🗂️'; } /* Folder/History */
+        .icon-add::before { content: '📋'; } 
+        .icon-view::before { content: '🗂️'; } 
     </style>
 </head>
 <body>

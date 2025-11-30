@@ -1,16 +1,12 @@
 <?php
-// 1. Session Check
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 2. Database Connection Check
 include '../db.php';
 
-// 3. Get Worker ID
 $worker_id = $_SESSION['worker_id'] ?? 0;
 
-// Get Notification count for badge
 $sql_notif = "SELECT COUNT(*) as unread FROM worker_notification WHERE worker_id = ? AND status = 'unread'";
 $stmt_n = $conn->prepare($sql_notif);
 $stmt_n->bind_param("i", $worker_id);
@@ -25,18 +21,14 @@ $notif_count = $stmt_n->get_result()->fetch_assoc()['unread'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Completed Work | MCCCTS</title>
     
-    <!-- FontAwesome for Icons -->
+  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- ✅ CSS FILE ATTACHED HERE ✅ -->
+   
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    
-
-    <!-- MAIN CONTENT -->
     <div class="container" style="margin-top: 30px;">
         <h1 class="page-title">Completed Work</h1>
         <p class="page-description">History of complaints you have successfully resolved.</p>

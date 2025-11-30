@@ -2,7 +2,6 @@
 session_start();
 include '../db.php';
 
-// 1. Check Login
 if (!isset($_SESSION['worker_id'])) {
     header("Location: ../LoginAndSignup/login.html");
     exit();
@@ -12,14 +11,13 @@ $worker_id = $_SESSION['worker_id'];
 $message = "";
 $error = "";
 
-// 2. Check for Complaint ID
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("<div class='container' style='margin-top:50px;'><h3>Error: Invalid ID.</h3><a href='worker_dashboard.php'>Return Home</a></div>");
 }
 
 $complaint_id = intval($_GET['id']);
 
-// 3. Handle Status Update
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
     $new_status = $_POST['status'];
     
@@ -35,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
     if ($stmt->execute()) {
         $message = "Status updated successfully to " . ucwords(str_replace('_', ' ', $new_status));
         
-        // Send Notification
         $cit_sql = "SELECT citizen_id, category FROM complaint WHERE complaint_id = ?";
         $cit_stmt = $conn->prepare($cit_sql);
         $cit_stmt->bind_param("i", $complaint_id);
@@ -56,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
     }
 }
 
-// 4. Fetch Details
 $sql = "SELECT c.*, cit.name AS citizen_name, cit.phone_no AS citizen_phone, cit.email AS citizen_email
         FROM complaint c
         JOIN citizen cit ON c.citizen_id = cit.citizen_id

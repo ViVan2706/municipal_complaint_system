@@ -1,10 +1,8 @@
 <?php
-// 1. Session Check: Start only if not already active
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 2. Database Connection Check
 if (!isset($conn)) {
     if (file_exists('../db.php')) {
         include '../db.php';
@@ -15,7 +13,6 @@ if (!isset($conn)) {
     }
 }
 
-// 3. Get Worker ID from Session
 $worker_id = $_SESSION['worker_id'] ?? 0;
 ?>
 
@@ -26,10 +23,8 @@ $worker_id = $_SESSION['worker_id'] ?? 0;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assigned Complaints</title>
     
-    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- ✅ THIS IS THE LINE TO ATTACH YOUR CSS ✅ -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -39,7 +34,6 @@ $worker_id = $_SESSION['worker_id'] ?? 0;
         <p class="page-description">View and manage complaints currently assigned to you.</p>
 
         <?php
-        // 4. SQL QUERY
         $sql = "SELECT c.complaint_id, c.category, c.severity, c.status, c.location, c.filed_date, 
                        cit.name AS citizen_name, cit.phone_no AS citizen_phone
                 FROM complaint c
@@ -57,7 +51,7 @@ $worker_id = $_SESSION['worker_id'] ?? 0;
             if (mysqli_num_rows($result) > 0) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     
-                    // 5. CSS Class Logic
+
                     $status_class = 'status-' . str_replace('_', '-', strtolower($row['status'])); 
                     $status_text = ucwords(str_replace('_', ' ', $row['status']));
                     $priority_class = 'priority-' . strtolower($row['severity']);

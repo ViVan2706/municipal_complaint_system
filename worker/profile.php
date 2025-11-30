@@ -2,7 +2,6 @@
 session_start();
 include '../db.php';
 
-// 1. Check Worker Login
 if (!isset($_SESSION['worker_id'])) {
     header("Location: ../LoginAndSignup/login.html");
     exit();
@@ -12,17 +11,16 @@ $worker_id = $_SESSION['worker_id'];
 $message = "";
 $error = "";
 
-// 2. Update Profile Logic (Name, Phone, and Availability Status)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_profile'])) {
     $name = trim($_POST['name']);
     $phone = trim($_POST['phone']);
-    $status = $_POST['availability_status']; // New status capture
+    $status = $_POST['availability_status']; 
     
     if (!empty($name) && !empty($phone)) {
-        // Updated SQL to include availability_status
+
         $update_sql = "UPDATE worker SET name = ?, phone_no = ?, availability_status = ? WHERE worker_id = ?";
         $update_stmt = $conn->prepare($update_sql);
-        // Changed bind parameters to "sssi" (string, string, string, integer)
+
         $update_stmt->bind_param("sssi", $name, $phone, $status, $worker_id);
         
         if ($update_stmt->execute()) {
@@ -37,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_profile'])) {
     }
 }
 
-// 3. Fetch Worker Details
 $sql = "SELECT name, email, phone_no, department, availability_status FROM worker WHERE worker_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $worker_id);
@@ -46,7 +43,6 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
 
-// 4. Fetch Notification Count
 $notif_sql = "SELECT COUNT(*) AS unread FROM worker_notification WHERE worker_id = ? AND status = 'unread'";
 $notif_stmt = $conn->prepare($notif_sql);
 $notif_stmt->bind_param("i", $worker_id);
@@ -64,7 +60,6 @@ $notif_stmt->close();
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Basic styling for the select dropdown to match inputs */
         select {
             width: 100%;
             padding: 10px;

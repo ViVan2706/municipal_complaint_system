@@ -13,17 +13,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case 'citizen':
             $table_name = "citizen";
             $id_column = "citizen_id";
-            $redirect_page = "../Citizen/home.php"; 
+            $redirect_page = "../citizen/home.php"; 
             break;
         case 'worker':
             $table_name = "worker";
             $id_column = "worker_id";
-            $redirect_page = "../Worker/worker_dashboard.php"; 
+            $redirect_page = "../worker/worker_dashboard.php"; 
             break;
         case 'admin':
             $table_name = "admin";
             $id_column = "admin_id";
-            $redirect_page = "../Admin/admin_dashboard.php"; 
+            $redirect_page = "../admin/home.php"; 
             break;
         default:
             $error_message = "An invalid role was selected.";

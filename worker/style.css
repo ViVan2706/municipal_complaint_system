@@ -1,6 +1,4 @@
-/* =========================================
-   1. VARIABLES & RESET
-   ========================================= */
+
 :root {
     --primary-blue: #0d6efd;
     --primary-hover: #0b5ed7;
@@ -29,9 +27,6 @@ body {
     line-height: 1.5;
 }
 
-/* =========================================
-   2. HEADER & NAVIGATION
-   ========================================= */
 .header {
     background-color: #ffffff;
     border-bottom: 1px solid #eaeaea;
@@ -108,9 +103,6 @@ body {
     box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
 }
 
-/* =========================================
-   3. LAYOUT & TYPOGRAPHY
-   ========================================= */
 .container {
     max-width: 1100px;
     margin: 0 auto;
@@ -129,9 +121,6 @@ body {
     margin-bottom: 2rem;
 }
 
-/* =========================================
-   4. DASHBOARD CARDS
-   ========================================= */
 .dashboard-cards {
     display: flex;
     gap: 20px;
@@ -174,9 +163,6 @@ body {
     margin-top: 10px;
 }
 
-/* =========================================
-   5. LIST ITEMS (General)
-   ========================================= */
 .list-item {
     background-color: var(--bg-white);
     border: 1px solid var(--border-color);
@@ -237,9 +223,6 @@ body {
 .item-details-row { display: flex; align-items: center; margin-bottom: 4px; }
 .item-details-row i { width: 20px; text-align: center; margin-right: 8px; color: #adb5bd; }
 
-/* =========================================
-   6. FORMS & INPUTS
-   ========================================= */
 .form-card {
     background-color: var(--bg-white);
     border: 1px solid var(--border-color);
@@ -269,9 +252,6 @@ input:focus, select:focus, textarea:focus {
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
-/* =========================================
-   7. BUTTONS
-   ========================================= */
 .btn-primary, .btn-update, .btn-save {
     background-color: var(--primary-blue);
     color: white;
@@ -322,12 +302,7 @@ input:focus, select:focus, textarea:focus {
     cursor: pointer;
 }
 
-/* =========================================
-   8. NOTIFICATION CARDS (Matching Screenshot)
-   ========================================= */
-/* =========================================
-   10. NOTIFICATION CARDS
-   ========================================= */
+
 .notification-card {
     background-color: #ffffff;
     border: 1px solid #eef0f3;
@@ -341,13 +316,12 @@ input:focus, select:focus, textarea:focus {
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
-/* UNREAD STATE: Blue bar on left, light blue background */
 .notification-card.unread {
     background-color: #f0f7ff; 
     border-left: 4px solid #0d6efd; 
 }
 
-/* Left side wrapper */
+
 .notif-left {
     display: flex;
     align-items: center;
@@ -355,7 +329,6 @@ input:focus, select:focus, textarea:focus {
     width: 80%;
 }
 
-/* Icon Wrapper */
 .notif-icon-box {
     width: 45px;
     height: 45px;
@@ -367,7 +340,6 @@ input:focus, select:focus, textarea:focus {
     font-size: 1.1rem;
 }
 
-/* Icon Colors */
 .icon-orange { background-color: #fff8e1; color: #ffc107; }
 .icon-green { background-color: #d1e7dd; color: #198754; }
 .icon-blue { background-color: #cfe2ff; color: #0d6efd; }
@@ -384,7 +356,6 @@ input:focus, select:focus, textarea:focus {
 
 .notif-actions { display: flex; align-items: center; gap: 10px; }
 
-/* "New" Badge */
 .badge-new {
     background-color: #0d6efd;
     color: white;
@@ -394,11 +365,10 @@ input:focus, select:focus, textarea:focus {
     border-radius: 20px;
 }
 
-/* GREEN TICK BUTTON */
 .btn-tick {
     background: white;
-    border: 2px solid #198754; /* Thicker Green Border */
-    color: #198754 !important; /* Force Green Icon */
+    border: 2px solid #198754; 
+    color: #198754 !important; 
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -410,7 +380,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-tick:hover {
-    background-color: #198754; /* Fill Green on Hover */
-    color: white !important;   /* White Icon on Hover */
+    background-color: #198754; 
+    color: white !important;   
     transform: scale(1.1);
 }
