@@ -3,7 +3,7 @@
 $host = 'localhost';
 $user = 'root';
 $pass = '';
-$dbname = 'municipal_complaint_system';
+$dbname = 'complaint_system';
 
 // Create connection
 $conn = new mysqli($host, $user, $pass, $dbname);

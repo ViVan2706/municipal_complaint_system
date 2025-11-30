@@ -38,6 +38,7 @@ $notification_count = $count_res['unread_count'] ?? 0;
     --text-dark: #212529;
     --text-muted: #6c757d;
     --background-light: #f8f9fa;
+    --success-green: #28a745;
 }
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -153,6 +154,11 @@ h1 {
     color: var(--text-muted);
     margin-top: 5px;
 }
+.notification-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+}
 .badge-new {
     background: var(--primary-blue);
     color: #fff;
@@ -160,6 +166,27 @@ h1 {
     padding: 4px 10px;
     border-radius: 12px;
     font-weight: 500;
+}
+
+.btn-tick {
+    background: transparent;
+    border: 2px solid var(--success-green);
+    color: var(--success-green);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+.btn-tick:hover {
+    background-color: var(--success-green);
+    color: white;
+    transform: scale(1.1);
 }
 </style>
 </head>
@@ -190,7 +217,7 @@ h1 {
     <h1>Notifications</h1>
     <?php if ($result->num_rows > 0): ?>
         <?php while ($row = $result->fetch_assoc()): ?>
-            <div class="notification-card" style="<?php echo ($row['status'] === 'unread') ? 'background:#f4f7ff;' : ''; ?>">
+            <div class="notification-card" style="<?php echo ($row['status'] === 'unread') ? 'background:#f4f7ff; border-left: 4px solid var(--primary-blue);' : ''; ?>">
                 <div class="notification-content">
                     <div class="icon-wrapper">
                         <?php
@@ -204,9 +231,18 @@ h1 {
                         <div class="notification-date"><?php echo htmlspecialchars($row['date_time']); ?></div>
                     </div>
                 </div>
-                <?php if ($row['status'] === 'unread'): ?>
-                    <span class="badge-new">New</span>
-                <?php endif; ?>
+
+                <div class="notification-actions">
+                    <?php if ($row['status'] === 'unread'): ?>
+                        <span class="badge-new">New</span>
+                        
+                        <form action="mark_read.php" method="POST" style="margin:0;">
+                            <input type="hidden" name="notif_id" value="<?php echo $row['citizen_notification_id']; ?>">
+                            <button type="submit" class="btn-tick" title="Mark as Read">✔</button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+
             </div>
         <?php endwhile; ?>
     <?php else: ?>
