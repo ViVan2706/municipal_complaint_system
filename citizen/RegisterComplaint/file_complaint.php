@@ -173,11 +173,6 @@ body {
         <textarea name="description" class="form-control" rows="4" placeholder="Describe the issue..." required></textarea>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Upload Photo/Video (Optional)</label>
-        <input type="file" name="attachment" class="form-control">
-      </div>
-
       <button type="submit" class="btn btn-primary w-100">Submit Complaint</button>
     </form>
   </div>

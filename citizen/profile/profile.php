@@ -8,8 +8,26 @@ if (!isset($_SESSION['citizen_id'])) {
 }
 
 $citizen_id = $_SESSION['citizen_id'];
+$message = "";
 
-// Fetch profile data
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_profile'])) {
+    $name = $_POST['name'];
+    $phone = $_POST['phone'];
+    $address = $_POST['address'];
+
+    $update_sql = "UPDATE citizen SET name = ?, phone_no = ?, address = ? WHERE citizen_id = ?";
+    $update_stmt = $conn->prepare($update_sql);
+    $update_stmt->bind_param("sssi", $name, $phone, $address, $citizen_id);
+    
+    if ($update_stmt->execute()) {
+        $message = "Profile updated successfully!";
+        $_SESSION['name'] = $name; 
+    } else {
+        $message = "Error updating profile.";
+    }
+    $update_stmt->close();
+}
+
 $sql = "SELECT name, email, phone_no, address, date_registered FROM citizen WHERE citizen_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $citizen_id);
@@ -18,7 +36,6 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
 
-// Fetch unread notifications count
 $notif_sql = "SELECT COUNT(*) AS unread FROM citizen_notification WHERE citizen_id = ? AND status = 'unread'";
 $notif_stmt = $conn->prepare($notif_sql);
 $notif_stmt->bind_param("i", $citizen_id);
@@ -41,6 +58,7 @@ $notif_stmt->close();
             --border-color: #dee2e6;
             --card-bg: #ffffff;
             --danger-red: #dc3545;
+            --success-green: #28a745;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -116,24 +134,31 @@ $notif_stmt->close();
             font-weight: 500;
             margin-bottom: 5px;
         }
-        input[readonly] {
+        input {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        input[readonly] {
             background-color: #f9fafb;
             color: #6c757d;
             cursor: not-allowed;
-            transition: all 0.2s ease-in-out;
+            border-color: var(--border-color);
         }
-
         input[readonly]:hover {
             border-color: #ff4d4f; 
             background-color: #fff5f5;
         }
-
-        .btn-primary {
+        
+        .btn-save {
             display: block;
             width: 100%;
             background-color: var(--primary-blue);
@@ -144,9 +169,38 @@ $notif_stmt->close();
             border-radius: 6px;
             cursor: pointer;
             transition: background 0.2s;
+            margin-top: 10px;
         }
-        .btn-primary:hover {
+        .btn-save:hover {
             background-color: #0056b3;
+        }
+
+        .btn-logout {
+            display: block;
+            width: 100%;
+            background-color: var(--danger-red);
+            color: white;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 15px;
+        }
+        .btn-logout:hover {
+            background-color: #c82333;
+        }
+
+        .alert {
+            padding: 10px;
+            background-color: #d4edda;
+            color: #155724;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .icon-register::before { content: '+'; font-weight: bold; }
@@ -174,30 +228,40 @@ $notif_stmt->close();
     <main>
         <div class="profile-container">
             <h2>Profile Information</h2>
-            <p>View and manage your profile details</p>
+            <p>Update your personal details below</p>
 
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" value="<?php echo htmlspecialchars($user['name']); ?>" readonly>
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" value="<?php echo htmlspecialchars($user['email']); ?>" readonly>
-            </div>
-            <div class="form-group">
-                <label>Phone Number</label>
-                <input type="text" value="<?php echo htmlspecialchars($user['phone_no']); ?>" readonly>
-            </div>
-            <div class="form-group">
-                <label>Address</label>
-                <input type="text" value="<?php echo htmlspecialchars($user['address']); ?>" readonly>
-            </div>
-            <div class="form-group">
-                <label>Date Registered</label>
-                <input type="text" value="<?php echo htmlspecialchars($user['date_registered']); ?>" readonly>
-            </div>
+            <?php if ($message): ?>
+                <div class="alert"><?php echo htmlspecialchars($message); ?></div>
+            <?php endif; ?>
 
-            <!--button class="btn-primary">Edit Profile</button-->
+            <form method="POST">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text" name="phone" value="<?php echo htmlspecialchars($user['phone_no']); ?>" required>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" name="address" value="<?php echo htmlspecialchars($user['address']); ?>" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email (Cannot be changed)</label>
+                    <input type="email" value="<?php echo htmlspecialchars($user['email']); ?>" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Date Registered</label>
+                    <input type="text" value="<?php echo htmlspecialchars($user['date_registered']); ?>" readonly>
+                </div>
+
+                <button type="submit" name="update_profile" class="btn-save">Save Changes</button>
+            </form>
+
+            <a href="../../LoginAndSignup/login.html" class="btn-logout">Logout</a>
+
         </div>
     </main>
 </body>
