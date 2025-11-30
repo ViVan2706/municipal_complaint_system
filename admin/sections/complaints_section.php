@@ -1,6 +1,10 @@
 <?php
-session_start();
-include '../../db.php';
+
+// session already started in admin_dashboard.php — do NOT start again
+// session_start();  <-- DELETE THIS
+
+// Always correct db path
+include __DIR__ . "/../../db.php";
 
 // Check admin login
 if (!isset($_SESSION['admin_id']) || $_SESSION['role'] !== 'admin') {
@@ -8,58 +12,137 @@ if (!isset($_SESSION['admin_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$complaint_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
-$action = $_GET['action'] ?? '';
 
-if (!$complaint_id || !$action) {
-    header("Location: ../admin_dashboard.php?section=complaints");
-    exit();
+// Fetch all complaints with citizen + worker
+$sql = "
+    SELECT c.*, 
+           ct.name AS citizen_name,
+           w.name AS worker_name
+    FROM complaint c
+    LEFT JOIN citizen ct ON c.citizen_id = ct.citizen_id
+    LEFT JOIN worker w ON c.worker_id = w.worker_id
+    ORDER BY c.filed_date DESC
+";
+
+$result = $conn->query($sql);
+?>
+
+<h1 class="page-title">Complaints</h1>
+<p class="page-description">Manage all complaints registered in the system.</p>
+
+<!-- Complaints Table -->
+<div class="table-container">
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Citizen</th>
+            <th>Category</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Worker</th>
+            <th>Date Filed</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <tr>
+                <td><?= $row["complaint_id"] ?></td>
+                <td><?= htmlspecialchars($row["citizen_name"]) ?></td>
+                <td><?= htmlspecialchars($row["category"]) ?></td>
+                <td><?= ucfirst($row["severity"]) ?></td>
+                <td><?= ucfirst($row["status"]) ?></td>
+                <td><?= $row["worker_name"] ? $row["worker_name"] : "Unassigned" ?></td>
+                <td><?= $row["filed_date"] ?></td>
+
+                <td>
+                    <!-- View Button -->
+                    <a href="../admin_dashboard.php?section=view_complaint&id=<?= $row['complaint_id'] ?>"
+                       class="btn-view">View</a>
+
+                    <!-- Assign Worker -->
+                    <a href="../admin_dashboard.php?section=assign_worker&id=<?= $row['complaint_id'] ?>"
+                       class="btn-assign">Assign</a>
+
+                    <!-- Status Buttons -->
+                    <a href="update_status.php?id=<?= $row['complaint_id'] ?>&action=resolved" 
+                       class="btn-status green">Resolve</a>
+
+                    <a href="update_status.php?id=<?= $row['complaint_id'] ?>&action=rejected" 
+                       class="btn-status red">Reject</a>
+
+                    <a href="update_status.php?id=<?= $row['complaint_id'] ?>&action=closed" 
+                       class="btn-status blue">Close</a>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+    </tbody>
+</table>
+</div>
+
+<style>
+.table-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
 }
 
-// Determine status
-$valid = ['resolved', 'rejected', 'closed'];
-if (!in_array($action, $valid)) {
-    die("Invalid status");
+.table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-$newStatus = $action;
-
-// Update complaint
-if ($newStatus === 'resolved') {
-    $update = $conn->prepare("
-        UPDATE complaint 
-        SET status = ?, resolved_date = CURDATE()
-        WHERE complaint_id = ?
-    ");
-    $update->bind_param("si", $newStatus, $complaint_id);
-} else {
-    $update = $conn->prepare("
-        UPDATE complaint 
-        SET status = ?
-        WHERE complaint_id = ?
-    ");
-    $update->bind_param("si", $newStatus, $complaint_id);
+.table th {
+    background: #0d47a1;
+    color: white;
+    padding: 10px;
 }
 
-$update->execute();
+.table td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
 
-// Fetch citizen_id
-$get = $conn->prepare("SELECT citizen_id FROM complaint WHERE complaint_id = ?");
-$get->bind_param("i", $complaint_id);
-$get->execute();
-$row = $get->get_result()->fetch_assoc();
-$citizen_id = $row['citizen_id'];
+.btn-view {
+    background: #1565c0;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+}
 
-// Insert citizen notification
-$message = "Status of your complaint #$complaint_id changed to $newStatus.";
+.btn-assign {
+    background: #6a1b9a;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+}
 
-$notify = $conn->prepare("
-    INSERT INTO citizen_notification (citizen_id, complaint_id, message, date_time, status)
-    VALUES (?, ?, ?, NOW(), 'unread')
-");
-$notify->bind_param("iis", $citizen_id, $complaint_id, $message);
-$notify->execute();
+.btn-status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    text-decoration: none;
+    color: white;
+}
 
-// Redirect to complaints list
-header("Location: ../admin_dashboard.php?section=complaints");
-exit();
+.btn-status.green { background: #2e7d32; }
+.btn-status.red { background: #c62828; }
+.btn-status.blue { background: #0277bd; }
+
+.page-title {
+    font-size: 26px;
+    color: #0d47a1;
+    font-weight: 700;
+}
+
+.page-description {
+    color: #444;
+    margin-bottom: 15px;
+}
+</style>
