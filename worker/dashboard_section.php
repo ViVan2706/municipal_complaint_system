@@ -27,40 +27,34 @@ mysqli_stmt_close($stmt_completed);
 
 ?>
 
-<h1 class="page-title">Welcome, <?php echo htmlspecialchars($worker_name); ?>!</h1>
-<p class="page-description">Manage and resolve assigned complaints</p>
+<h1 class="page-title">Welcome Back, <?php echo htmlspecialchars($worker_name); ?>!</h1>
+<p class="page-description">Manage your assigned complaints and track progress</p>
 
 <div class="dashboard-cards">
     <div class="card">
-        <i class="fas fa-clock icon"></i>
         <div class="value"><?php echo $count_assigned; ?></div>
-        <div class="label">Assigned Complaints</div>
+        <div class="label">Pending Assigned</div>
+    </div>
+    <div class="card completed">
+        <div class="value"><?php echo $count_completed; ?></div>
+        <div class="label">Resolved Complaints</div>
     </div>
     <div class="card in-progress">
-        <i class="fas fa-clipboard-list icon"></i>
         <div class="value"><?php echo $count_progress; ?></div>
         <div class="label">In Progress</div>
     </div>
-    <div class="card completed">
-        <i class="fas fa-check-circle icon"></i>
-        <div class="value"><?php echo $count_completed; ?></div>
-        <div class="label">Completed</div>
-    </div>
 </div>
 
-<div class="action-buttons">
-    <a href="worker_dashboard.php?section=assigned" class="action-button">
-        <i class="fas fa-clipboard-list"></i> 
-        <div class="action-button-content">
-            <span class="action-button-title">View Assigned Complaints</span>
-            <span class="action-button-subtitle">Manage complaints assigned to you</span>
-        </div>
+<div style="display: flex; gap: 20px;">
+    <a href="worker_dashboard.php?section=assigned" class="card" style="text-decoration: none; border-left: 5px solid var(--primary-blue); cursor: pointer;">
+        <div style="color: var(--primary-blue); font-size: 1.5rem; margin-bottom: 10px;">+</div>
+        <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-dark);">View Assigned Complaints</div>
+        <div class="label">Check tasks assigned to you</div>
     </a>
-    <a href="worker_dashboard.php?section=completed" class="action-button completed-work">
-        <i class="fas fa-check-circle"></i> 
-        <div class="action-button-content">
-            <span class="action-button-title">Completed Work</span>
-            <span class="action-button-subtitle">Review your resolved complaints</span>
-        </div>
+    
+    <a href="worker_dashboard.php?section=completed" class="card" style="text-decoration: none; border-left: 5px solid var(--success-green); cursor: pointer;">
+        <div style="color: var(--success-green); font-size: 1.5rem; margin-bottom: 10px;">📄</div>
+        <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-dark);">View Completed Work</div>
+        <div class="label">Track your resolved history</div>
     </a>
 </div>
