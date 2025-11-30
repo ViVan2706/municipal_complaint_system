@@ -1,7 +1,4 @@
 <?php
-// This file assumes $conn and $worker_id are available from worker_dashboard.php
-
-// 1. Get Assigned Complaints Count
 $sql_assigned = "SELECT COUNT(*) AS count FROM complaint WHERE worker_id = ? AND status IN ('pending', 'in_progress')";
 $stmt_assigned = mysqli_prepare($conn, $sql_assigned);
 mysqli_stmt_bind_param($stmt_assigned, "i", $worker_id);
@@ -9,7 +6,6 @@ mysqli_stmt_execute($stmt_assigned);
 $count_assigned = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_assigned))['count'];
 mysqli_stmt_close($stmt_assigned);
 
-// 2. Get In-Progress Complaints Count
 $sql_progress = "SELECT COUNT(*) AS count FROM complaint WHERE worker_id = ? AND status = 'in_progress'";
 $stmt_progress = mysqli_prepare($conn, $sql_progress);
 mysqli_stmt_bind_param($stmt_progress, "i", $worker_id);
@@ -17,7 +13,6 @@ mysqli_stmt_execute($stmt_progress);
 $count_progress = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_progress))['count'];
 mysqli_stmt_close($stmt_progress);
 
-// 3. Get Completed Complaints Count
 $sql_completed = "SELECT COUNT(*) AS count FROM complaint WHERE worker_id = ? AND status IN ('resolved', 'closed')";
 $stmt_completed = mysqli_prepare($conn, $sql_completed);
 mysqli_stmt_bind_param($stmt_completed, "i", $worker_id);
