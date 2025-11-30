@@ -3,12 +3,9 @@
 session_start();
 include '../db.php'; 
 
-// --- SIMULATED LOGIN (Remove/Adjust for real system) ---
-$_SESSION['worker_id'] = 306; 
-// -----------------------------------------------------
-
 if (!isset($_SESSION['worker_id'])) {
-    die("Simulated login failed. No worker_id in session."); 
+    header("Location: ../LoginAndSignup/login.html");
+    exit();
 }
 
 $worker_id = $_SESSION['worker_id'];

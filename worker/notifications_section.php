@@ -1,7 +1,6 @@
 <h1 class="page-title">Notifications</h1>
 
 <?php
-// This file assumes $conn and $worker_id are available from worker_dashboard.php
 
 $sql = "SELECT * FROM worker_notification
         WHERE worker_id = ?
@@ -15,47 +14,64 @@ $result = mysqli_stmt_get_result($stmt);
 if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         
-        // Logic to determine icon based on message content
-        $icon_class = "fas fa-info-circle"; // default
-        $message_lower = strtolower($row['message']);
-        
-        if (strpos($message_lower, 'assigned') !== false) {
-            $icon_class = "fas fa-user";
-        } elseif (strpos($message_lower, 'completed') !== false || strpos($message_lower, 'approved') !== false) {
-            $icon_class = "fas fa-check-circle";
-        } elseif (strpos($message_lower, 'progress') !== false) {
-            $icon_class = "fas fa-clock";
+        $msg = strtolower($row['message']);
+        if (strpos($msg, 'assigned') !== false) {
+            $icon = "fas fa-user";
+            $icon_style = "icon-orange"; 
+        } elseif (strpos($msg, 'resolved') !== false || strpos($msg, 'completed') !== false) {
+            $icon = "fas fa-check";
+            $icon_style = "icon-green"; 
+        } else {
+            $icon = "fas fa-info";
+            $icon_style = "icon-blue"; 
         }
         
-        // Show 'New' badge
-        $is_new = ($row['status'] == 'unread');
+        // 2. Determine Status (Read/Unread)
+        $is_unread = ($row['status'] == 'unread');
+        // 'unread' class triggers the blue left border and light blue background
+        $card_class = $is_unread ? 'unread' : ''; 
 ?>
 
-<div class="list-item notification-item">
-    <div class="notification-icon-text">
-        <i class="<?php echo $icon_class; ?>"></i>
-        <div class="notification-content">
-            <div class="notification-text"><?php echo htmlspecialchars($row['message']); ?></div>
-            <div class="notification-date"><?php echo date("Y-m-d h:i A", strtotime($row['date_time'])); ?></div>
+<div class="notification-card <?php echo $card_class; ?>">
+    
+    <div class="notif-left">
+        <div class="notif-icon-box <?php echo $icon_style; ?>">
+            <i class="<?php echo $icon; ?>"></i>
+        </div>
+        
+        <div>
+            <div class="notif-message">
+                <?php echo htmlspecialchars($row['message']); ?>
+            </div>
+            <div class="notif-date">
+                <?php echo date("Y-m-d H:i:s", strtotime($row['date_time'])); ?>
+            </div>
         </div>
     </div>
-    <?php if ($is_new): ?>
-        <span class="item-status status-new">New</span>
-    <?php endif; ?>
+
+    <div class="notif-actions">
+        <?php if ($is_unread): ?>
+            <span class="badge-new">New</span>
+            
+            <form action="mark_read.php" method="POST" style="margin:0;">
+                <input type="hidden" name="notif_id" value="<?php echo $row['worker_notification_id']; ?>">
+                <button type="submit" class="btn-tick" title="Mark as Read">
+                    <i class="fas fa-check"></i>
+                </button>
+            </form>
+        <?php else: ?>
+            <span style="color: #ccc; font-size: 1.2rem;">
+                <i class="fas fa-check-double"></i>
+             </span>
+        <?php endif; ?>
+    </div>
+
 </div>
 
 <?php
-    } // end while
-
-    // After loading, let's mark all 'unread' as 'read' for this worker
-    $sql_update = "UPDATE worker_notification SET status = 'read' WHERE worker_id = ? AND status = 'unread'";
-    $stmt_update = mysqli_prepare($conn, $sql_update);
-    mysqli_stmt_bind_param($stmt_update, "i", $worker_id);
-    mysqli_stmt_execute($stmt_update);
-    mysqli_stmt_close($stmt_update);
-
+    } 
 } else {
-    echo "<p>You have no notifications.</p>";
+    echo "<p style='color:#6c757d; text-align:center; margin-top:20px;'>You have no notifications.</p>";
 }
 mysqli_stmt_close($stmt);
 ?>

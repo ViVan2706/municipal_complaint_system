@@ -1,6 +1,8 @@
 <h1 class="page-title">Assigned Complaints</h1>
 
 <?php
+// This file assumes $conn and $worker_id are available from worker_dashboard.php
+
 $sql = "SELECT c.complaint_id, c.category, c.severity, c.status, c.location, c.filed_date, 
                cit.name AS citizen_name, cit.phone_no AS citizen_phone
         FROM complaint c
@@ -18,7 +20,7 @@ if (mysqli_num_rows($result) > 0) {
         
         // CSS classes for badges
         $priority_class = strtolower($row['severity']); // low, medium, high, critical
-        $status_class = str_replace('_', '-', strtolower($row['status']));
+        $status_class = str_replace('_', '-', strtolower($row['status'])); // pending, in-progress
 
         $status_text = ucwords(str_replace('_', ' ', $row['status']));
 ?>
@@ -39,7 +41,8 @@ if (mysqli_num_rows($result) > 0) {
         <div class="item-details-row"><i class="fas fa-calendar-alt"></i> Filed: <?php echo date("F j, Y", strtotime($row['filed_date'])); ?></div>
         <div class="item-details-row"><i class="fas fa-user"></i> Citizen: <?php echo htmlspecialchars($row['citizen_name']); ?> (<?php echo htmlspecialchars($row['citizen_phone']); ?>)</div>
     </div>
-    <button class="view-details-button">View Details</button>
+    
+    <a href="worker_complaint_detail.php?id=<?php echo $row['complaint_id']; ?>" class="btn-outline">View Details</a>
 </div>
 
 <?php
