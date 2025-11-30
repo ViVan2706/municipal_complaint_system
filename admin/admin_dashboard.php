@@ -1,108 +1,94 @@
 <?php
-require_once "db.php";
 session_start();
+include "../db.php";
 
+// CHECK ADMIN LOGIN
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: admin_login.php");
+    header("Location: ../LoginAndSignup/login.html");
     exit();
 }
 
-// Fetch statistics
-$stats = [];
-$queries = [
-    "total"        => "SELECT COUNT(*) AS cnt FROM complaint",
-    "pending"      => "SELECT COUNT(*) AS cnt FROM complaint WHERE status='pending'",
-    "in_progress"  => "SELECT COUNT(*) AS cnt FROM complaint WHERE status='in_progress'",
-    "resolved"     => "SELECT COUNT(*) AS cnt FROM complaint WHERE status='resolved'",
-    "closed"       => "SELECT COUNT(*) AS cnt FROM complaint WHERE status='closed'"
-];
+// Router section
+$section = $_GET['section'] ?? 'dashboard';
 
-foreach ($queries as $key => $sql) {
-    $result = $conn->query($sql);
-    $stats[$key] = $result->fetch_assoc()['cnt'] ?? 0;
+// ACTIVE TAB UI
+function active($name, $current) {
+    return $name === $current ? 'active' : '';
 }
 
-require "admin_header.php";
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard | MCCCTS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
 
-<h2>Welcome, <?= htmlspecialchars($_SESSION['admin_name']) ?></h2>
+<body>
 
-<div class="row mt-4">
+<div class="main-container">
 
-    <div class="col-md-3">
-        <div class="card p-3 text-center">
-            <h5>Total Complaints</h5>
-            <h3><?= $stats['total'] ?></h3>
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fas fa-user-shield"></i> MCCCTS Admin Panel
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card p-3 text-center">
-            <h5>Pending</h5>
-            <h3><?= $stats['pending'] ?></h3>
-        </div>
-    </div>
+        <nav>
+            <ul>
+                <li><a class="<?= active('dashboard', $section) ?>" href="admin_dashboard.php?section=dashboard">
+                    <i class="fas fa-home"></i> Dashboard</a></li>
 
-    <div class="col-md-3">
-        <div class="card p-3 text-center">
-            <h5>In Progress</h5>
-            <h3><?= $stats['in_progress'] ?></h3>
-        </div>
-    </div>
+                <li><a class="<?= active('complaints', $section) ?>" href="admin_dashboard.php?section=complaints">
+                    <i class="fas fa-clipboard-list"></i> Complaints</a></li>
 
-    <div class="col-md-3">
-        <div class="card p-3 text-center">
-            <h5>Resolved</h5>
-            <h3><?= $stats['resolved'] ?></h3>
-        </div>
-    </div>
+                <li><a class="<?= active('workers', $section) ?>" href="admin_dashboard.php?section=workers">
+                    <i class="fas fa-users"></i> Workers</a></li>
 
-</div>
+                <li><a class="<?= active('citizens', $section) ?>" href="admin_dashboard.php?section=citizens">
+                    <i class="fas fa-user"></i> Citizens</a></li>
 
-<hr class="mt-4">
+                <li><a class="<?= active('notifications', $section) ?>" href="admin_dashboard.php?section=notifications">
+                    <i class="fas fa-bell"></i> Notifications</a></li>
 
-<h4>Recent Complaints</h4>
+                <li><a class="<?= active('profile', $section) ?>" href="admin_dashboard.php?section=profile">
+                    <i class="fas fa-user-circle"></i> Profile</a></li>
 
-<div class="table-responsive">
-    <table class="table table-bordered table-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Citizen</th>
-                <th>Category</th>
-                <th>Severity</th>
-                <th>Status</th>
-                <th>Filed Date</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
+                <li><a href="../LoginAndSignup/logout.php">
+                    <i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+
         <?php
-        $sql = "SELECT c.*, ct.name AS citizen_name 
-                FROM complaint c
-                LEFT JOIN citizen ct 
-                ON c.citizen_id = ct.citizen_id
-                ORDER BY filed_date DESC
-                LIMIT 8";
-
-        $res = $conn->query($sql);
-
-        while ($row = $res->fetch_assoc()):
+        if ($section == 'dashboard') {
+            include "sections/dashboard_section.php";
+        }
+        elseif ($section == 'complaints') {
+            include "sections/complaints_section.php";
+        }
+        elseif ($section == 'workers') {
+            include "sections/worker_section.php";
+        }
+        elseif ($section == 'citizens') {
+            include "sections/citizen_section.php";
+        }
+        elseif ($section == 'notifications') {
+            include "sections/notifications_section.php";
+        }
+        elseif ($section == 'profile') {
+            include "sections/profile_section.php";
+        }
         ?>
-            <tr>
-                <td><?= $row['complaint_id'] ?></td>
-                <td><?= htmlspecialchars($row['citizen_name']) ?></td>
-                <td><?= htmlspecialchars($row['category']) ?></td>
-                <td><?= $row['severity'] ?></td>
-                <td><?= $row['status'] ?></td>
-                <td><?= $row['filed_date'] ?></td>
-                <td>
-                    <a href="view_complaints.php?view=<?= $row['complaint_id'] ?>" class="btn btn-sm btn-primary">View</a>
-                </td>
-            </tr>
-        <?php endwhile; ?>
-        </tbody>
-    </table>
+
+    </main>
 </div>
 
-<?php require "admin_footer.php"; ?>
+</body>
+</html>
